@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self';" />
+<title>LifeOS</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body data-mode="collapsed" data-theme="glass">
+
+  <!-- ============ COLLAPSED WIDGET ============ -->
+  <div id="collapsed-view" class="collapsed-shell" data-drag-region>
+    <button id="expandBtn" class="orb-ring" title="Open dashboard">
+      <svg id="progressRing" viewBox="0 0 44 44" class="ring-svg">
+        <circle cx="22" cy="22" r="19" class="ring-bg" />
+        <circle cx="22" cy="22" r="19" class="ring-fg" id="ringFg" />
+      </svg>
+      <span id="clockCollapsed" class="clock-mini">--:--</span>
+    </button>
+
+    <div class="collapsed-info">
+      <div class="collapsed-current" id="collapsedCurrent">No task running</div>
+      <div class="collapsed-next" id="collapsedNext">Next: —</div>
+    </div>
+
+    <div class="collapsed-pet-slot">
+      <div id="petCollapsed" class="pet-mini">🐣</div>
+    </div>
+
+    <div class="collapsed-pomo" id="collapsedPomo">25:00</div>
+
+    <div class="collapsed-actions">
+      <button class="icon-btn" id="micBtn" title="Voice command">🎙</button>
+      <button class="icon-btn" id="quickAddBtn" title="Quick add">＋</button>
+      <button class="icon-btn" id="bellBtn" title="Notifications">🔔<span id="bellDot" class="dot hidden"></span></button>
+    </div>
+  </div>
+
+  <!-- ============ EXPANDED DASHBOARD ============ -->
+  <div id="expanded-view" class="dashboard-shell">
+    <header class="dash-header" data-drag-region>
+      <div class="brand"><span class="brand-mark">◆</span><span class="brand-name">LifeOS</span></div>
+      <div class="header-actions">
+        <span id="clockExpanded" class="clock-full">--:--:--</span>
+        <button id="collapseBtn" class="icon-btn" title="Collapse">﹘</button>
+      </div>
+    </header>
+
+    <div class="dash-body">
+      <nav class="rail">
+        <button class="rail-btn active" data-section="home" title="Home">⌂</button>
+        <button class="rail-btn" data-section="timeline" title="Timeline">🕒</button>
+        <button class="rail-btn" data-section="todos" title="To-Do">✓</button>
+        <button class="rail-btn" data-section="deadlines" title="Deadlines">⏰</button>
+        <button class="rail-btn" data-section="exams" title="Exams">🎓</button>
+        <button class="rail-btn" data-section="pomodoro" title="Pomodoro">◔</button>
+        <button class="rail-btn" data-section="notes" title="Notes">▤</button>
+        <button class="rail-btn" data-section="journal" title="Journal">✎</button>
+        <button class="rail-btn" data-section="calendar" title="Calendar">▦</button>
+        <button class="rail-btn" data-section="analytics" title="Analytics">📊</button>
+        <button class="rail-btn" data-section="coach" title="AI Coach">✨</button>
+        <button class="rail-btn" data-section="planner" title="AI Planner">🧭</button>
+        <button class="rail-btn" data-section="settings" title="Settings">⚙</button>
+      </nav>
+
+      <main class="content">
+        <!-- Home -->
+        <section class="panel active" id="panel-home">
+          <h2>Home</h2>
+          <div id="homeQuote" class="quote-card"></div>
+          <div class="home-grid">
+            <div class="home-card">
+              <h3>Today's Schedule</h3>
+              <div id="homeScheduleMini"></div>
+            </div>
+            <div class="home-card">
+              <h3>Upcoming Tasks</h3>
+              <div id="homeTasksMini"></div>
+            </div>
+            <div class="home-card">
+              <h3>Deadlines</h3>
+              <div id="homeDeadlinesMini"></div>
+            </div>
+            <div class="home-card">
+              <h3>Study Progress</h3>
+              <div id="homeStudyMini"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Timeline -->
+        <section class="panel" id="panel-timeline">
+          <div class="panel-head"><h2>Today's Timeline</h2><button class="pill-btn" id="regenBtn">Regenerate</button></div>
+          <div id="timelineList" class="timeline-list"></div>
+        </section>
+
+        <!-- Todos -->
+        <section class="panel" id="panel-todos">
+          <div class="panel-head"><h2>To-Do</h2><button class="pill-btn" id="addTodoBtn">+ Task</button></div>
+          <div class="filter-row" id="todoFilters"></div>
+          <div id="todoList" class="todo-list" data-drag-list></div>
+        </section>
+
+        <!-- Deadlines -->
+        <section class="panel" id="panel-deadlines">
+          <h2>Deadlines</h2>
+          <div class="deadline-tabs" id="deadlineTabs">
+            <button class="tab active" data-range="today">Today</button>
+            <button class="tab" data-range="tomorrow">Tomorrow</button>
+            <button class="tab" data-range="week">This Week</button>
+            <button class="tab" data-range="upcoming">Upcoming</button>
+            <button class="tab" data-range="overdue">Overdue</button>
+          </div>
+          <div id="deadlineList" class="deadline-list"></div>
+        </section>
+
+        <!-- Exams -->
+        <section class="panel" id="panel-exams">
+          <div class="panel-head"><h2>Exams</h2><button class="pill-btn" id="addExamBtn">+ Exam</button></div>
+          <p class="hint">Exams within 3 days automatically get more Revision time in your evening schedule.</p>
+          <div id="examList" class="deadline-list"></div>
+        </section>
+
+        <!-- Pomodoro -->
+        <section class="panel" id="panel-pomodoro">
+          <h2>Pomodoro</h2>
+          <div class="pomo-display">
+            <div class="pomo-time" id="pomoTime">25:00</div>
+            <div class="pomo-modes">
+              <button class="chip active" data-mode="25/5">25 / 5</button>
+              <button class="chip" data-mode="50/10">50 / 10</button>
+              <button class="chip" data-mode="90/20">90 / 20</button>
+              <button class="chip" data-mode="custom">Custom</button>
+            </div>
+            <div class="pomo-controls">
+              <button class="pill-btn" id="pomoStartBtn">Start</button>
+              <button class="pill-btn ghost" id="pomoResetBtn">Reset</button>
+            </div>
+            <div class="pomo-stats" id="pomoStats"></div>
+          </div>
+        </section>
+
+        <!-- Notes -->
+        <section class="panel" id="panel-notes">
+          <div class="panel-head">
+            <h2>Notes</h2>
+            <div class="notes-controls">
+              <input type="text" id="noteSearch" placeholder="Search notes…" />
+              <button class="pill-btn" id="addNoteBtn">+ Note</button>
+            </div>
+          </div>
+          <div id="noteList" class="note-grid"></div>
+        </section>
+
+        <!-- Journal -->
+        <section class="panel" id="panel-journal">
+          <h2>Daily Journal</h2>
+          <form id="journalForm" class="journal-form">
+            <label>How was today?<textarea name="howWasYourDay" rows="2"></textarea></label>
+            <label>What distracted you?<textarea name="whatDistractedYou" rows="2"></textarea></label>
+            <label>What did you learn?<textarea name="whatDidYouLearn" rows="2"></textarea></label>
+            <label>What made you happy?<textarea name="whatMadeYouHappy" rows="2"></textarea></label>
+            <button type="submit" class="pill-btn">Save Entry</button>
+          </form>
+        </section>
+
+        <!-- Calendar -->
+        <section class="panel" id="panel-calendar">
+          <h2>Calendar</h2>
+          <div class="calendar-nav"><button class="icon-btn" id="calPrev">‹</button><span id="calMonthLabel"></span><button class="icon-btn" id="calNext">›</button></div>
+          <div id="calendarGrid" class="calendar-grid"></div>
+          <div id="calendarDayDetail" class="calendar-day-detail"></div>
+        </section>
+
+        <!-- Analytics -->
+        <section class="panel" id="panel-analytics">
+          <h2>Productivity Analytics</h2>
+          <div id="analyticsSummary" class="analytics-summary"></div>
+          <canvas id="analyticsChart" width="360" height="180"></canvas>
+          <div id="subjectBreakdown" class="subject-breakdown"></div>
+        </section>
+
+        <!-- AI Coach -->
+        <section class="panel" id="panel-coach">
+          <h2>AI Productivity Coach</h2>
+          <div class="coach-suggestions" id="coachSuggestions"></div>
+          <div id="coachLog" class="coach-log"></div>
+          <form id="coachForm" class="coach-form">
+            <input type="text" id="coachInput" placeholder="Ask about today, deadlines, placement prep…" />
+            <button type="submit" class="pill-btn">Ask</button>
+          </form>
+        </section>
+
+        <!-- AI Planner -->
+        <section class="panel" id="panel-planner">
+          <h2>Smart AI Scheduler</h2>
+          <form id="plannerForm" class="planner-form">
+            <label>Wake up<input type="time" name="wakeUp" /></label>
+            <label>Sleep<input type="time" name="sleep" /></label>
+            <label class="full">Goals<input type="text" name="goals" placeholder="Crack placements, finish project" /></label>
+            <label class="full checkbox-row"><input type="checkbox" name="placementPrepActive" /> Placement prep active (weight DSA / Aptitude higher)</label>
+            <button type="submit" class="pill-btn">Generate Today's Schedule</button>
+          </form>
+          <p class="hint">Your college timetable is fixed (edit <code>database/timetable-data.js</code>). This regenerates the rest of the day around it — evening study blocks shift automatically based on exams, deadlines, and placement prep. Add an OpenAI-compatible API key in Settings to let a real model fine-tune it.</p>
+        </section>
+
+        <!-- Settings -->
+        <section class="panel" id="panel-settings">
+          <h2>Settings</h2>
+          <div class="settings-grid" id="settingsGrid"></div>
+          <div class="settings-actions">
+            <button class="pill-btn" id="exportBtn">Export Backup</button>
+            <button class="pill-btn ghost" id="importBtn">Restore Backup</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Floating pet companion -->
+    <div id="pet" class="pet" title="Your LifeOS companion">
+      <div class="pet-body" id="petBody">🐣</div>
+      <div class="pet-bubble hidden" id="petBubble"></div>
+    </div>
+  </div>
+
+  <!-- Quick Add modal -->
+  <div id="quickAddModal" class="modal hidden">
+    <div class="modal-card">
+      <h3>Quick Add</h3>
+      <input type="text" id="quickAddInput" placeholder="e.g. Finish DSA sheet by 9pm" />
+      <div class="modal-actions">
+        <button class="pill-btn ghost" id="quickAddCancel">Cancel</button>
+        <button class="pill-btn" id="quickAddSave">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Task modal -->
+  <div id="taskModal" class="modal hidden">
+    <div class="modal-card">
+      <h3>New Task</h3>
+      <form id="taskForm" class="modal-form">
+        <input type="text" name="title" placeholder="Task title" required />
+        <textarea name="description" rows="2" placeholder="Description (optional)"></textarea>
+        <div class="modal-form-row">
+          <select name="priority">
+            <option value="low">Low priority</option>
+            <option value="medium" selected>Medium priority</option>
+            <option value="high">High priority</option>
+          </select>
+          <select name="category" id="taskCategorySelect"></select>
+        </div>
+        <div class="modal-form-row">
+          <label class="inline-label">Deadline <input type="date" name="deadline" /></label>
+          <label class="inline-label checkbox-inline"><input type="checkbox" name="recurring" /> Recurring</label>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="pill-btn ghost" id="taskCancel">Cancel</button>
+          <button type="submit" class="pill-btn">Add Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Exam modal -->
+  <div id="examModal" class="modal hidden">
+    <div class="modal-card">
+      <h3>New Exam</h3>
+      <form id="examForm" class="modal-form">
+        <input type="text" name="subject" placeholder="Subject" required />
+        <label class="inline-label">Exam date <input type="date" name="date" required /></label>
+        <div class="modal-actions">
+          <button type="button" class="pill-btn ghost" id="examCancel">Cancel</button>
+          <button type="submit" class="pill-btn">Add Exam</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Pomodoro custom-length modal -->
+  <div id="pomoCustomModal" class="modal hidden">
+    <div class="modal-card">
+      <h3>Custom Pomodoro</h3>
+      <form id="pomoCustomForm" class="modal-form">
+        <div class="modal-form-row">
+          <label class="inline-label">Focus (min) <input type="number" name="focus" min="1" max="180" value="45" /></label>
+          <label class="inline-label">Break (min) <input type="number" name="brk" min="1" max="60" value="15" /></label>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="pill-btn ghost" id="pomoCustomCancel">Cancel</button>
+          <button type="submit" class="pill-btn">Set</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="renderer.js"></script>
+</body>
+</html>

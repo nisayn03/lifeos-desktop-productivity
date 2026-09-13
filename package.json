@@ -1,0 +1,43 @@
+{
+  "name": "lifeos",
+  "version": "1.0.0",
+  "description": "LifeOS — an AI-powered desktop productivity widget with a virtual companion.",
+  "main": "main.js",
+  "author": "You",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "generate-assets": "node scripts/generate-assets.js",
+    "download-fonts": "node scripts/download-font.js",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "dependencies": {
+    "pngjs": "^7.0.0"
+  },
+  "build": {
+    "appId": "com.lifeos.widget",
+    "productName": "LifeOS",
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer.js",
+      "index.html",
+      "styles.css",
+      "core/**/*",
+      "database/**/*",
+      "components/**/*",
+      "assets/**/*"
+    ],
+    "directories": { "output": "dist" },
+   "win": { "target": "nsis", "icon": "assets/LifeOS-app-icon.ico" },
+    "mac": { "target": "dmg", "icon": "assets/icons/icon.icns" }
+  }
+}
